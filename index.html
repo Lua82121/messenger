@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Приватный мессенджер</title>
+    <title>Простой мессенджер для двоих</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,14 +24,14 @@
         .container {
             width: 100%;
             max-width: 500px;
-            background-color: white;
+            background: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(to right, #667eea, #764ba2);
             color: white;
             padding: 20px;
             text-align: center;
@@ -60,32 +60,32 @@
         input, select {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e1e1e1;
+            border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s;
         }
         
         input:focus, select:focus {
-            border-color: #4a00e0;
+            border-color: #667eea;
             outline: none;
         }
         
         button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(to right, #667eea, #764ba2);
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
         
         button:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .chat-container {
@@ -95,7 +95,7 @@
         }
         
         .chat-header {
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(to right, #667eea, #764ba2);
             color: white;
             padding: 15px 20px;
             display: flex;
@@ -107,38 +107,39 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            background-color: #f9f9f9;
+            background: #f8f9fa;
         }
         
         .message {
             margin-bottom: 15px;
             max-width: 80%;
             padding: 12px 15px;
-            border-radius: 18px;
-            position: relative;
+            border-radius: 15px;
+            word-wrap: break-word;
         }
         
         .my-message {
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            background: linear-gradient(to right, #667eea, #764ba2);
             color: white;
             margin-left: auto;
             border-bottom-right-radius: 5px;
         }
         
         .friend-message {
-            background-color: #e9e9e9;
+            background: #e9ecef;
             color: #333;
             border-bottom-left-radius: 5px;
         }
         
         .message-sender {
             font-size: 12px;
-            margin-bottom: 5px;
             font-weight: 600;
+            margin-bottom: 5px;
+            opacity: 0.9;
         }
         
         .message-time {
-            font-size: 10px;
+            font-size: 11px;
             text-align: right;
             margin-top: 5px;
             opacity: 0.7;
@@ -147,280 +148,293 @@
         .chat-input {
             display: flex;
             padding: 15px;
-            border-top: 1px solid #e1e1e1;
+            background: white;
+            border-top: 1px solid #eee;
+            gap: 10px;
         }
         
         .chat-input input {
             flex: 1;
-            margin-right: 10px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
         }
         
         .chat-input button {
             width: auto;
-            padding: 10px 20px;
+            padding: 12px 20px;
+            white-space: nowrap;
         }
         
         .instructions {
-            background: #f8f9fa;
+            background: #e3f2fd;
             padding: 15px;
             margin: 15px 0;
             border-radius: 8px;
-            border-left: 4px solid #4a00e0;
+            border-left: 4px solid #667eea;
             font-size: 14px;
         }
         
-        .online-status {
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
-        .status-dot {
-            width: 10px;
-            height: 10px;
+        .online-dot {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background-color: #e74c3c;
+            background: #4caf50;
+            display: inline-block;
         }
         
-        .status-dot.online {
-            background-color: #2ecc71;
+        .typing-indicator {
+            color: #666;
+            font-style: italic;
+            font-size: 14px;
+            padding: 5px 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Форма входа -->
         <div id="login-form" class="form-container">
             <div class="header">
-                <h1>Приватный мессенджер</h1>
+                <h1>💬 Простой мессенджер</h1>
                 <p>Только для вас и вашего друга</p>
             </div>
             
             <div class="instructions">
-                <strong>ВНИМАНИЕ: Для работы чата нужно настроить Google Таблицу</strong><br><br>
-                1. Создайте Google Таблицу по <a href="https://docs.google.com/spreadsheets" target="_blank">ссылке</a><br>
-                2. Скопируйте её ID из URL (между /d/ и /edit)<br>
-                3. Вставьте ID ниже
-            </div>
-            
-            <div class="form-group">
-                <label for="sheet-id">ID Google Таблицы:</label>
-                <input type="text" id="sheet-id" placeholder="Введите ID вашей Google Таблицы">
+                <strong>Как использовать:</strong><br>
+                1. Выберите кто вы - "Я" или "Мой друг"<br>
+                2. Введите ваше имя<br>
+                3. Начните общаться!<br>
+                <br>
+                <em>Сообщения сохраняются в вашем браузере</em>
             </div>
             
             <div class="form-group">
                 <label for="user-role">Вы кто?</label>
                 <select id="user-role">
-                    <option value="user1">Я (Пользователь 1)</option>
-                    <option value="user2">Мой друг (Пользователь 2)</option>
+                    <option value="user1">👤 Я (Пользователь 1)</option>
+                    <option value="user2">👥 Мой друг (Пользователь 2)</option>
                 </select>
             </div>
             
             <div class="form-group">
                 <label for="username">Ваше имя</label>
-                <input type="text" id="username" placeholder="Введите ваше имя">
+                <input type="text" id="username" placeholder="Введите ваше имя" value="Я">
             </div>
             
             <button id="login-btn">Войти в чат</button>
-            <div id="login-message" style="margin-top: 15px; text-align: center;"></div>
         </div>
         
+        <!-- Чат -->
         <div id="chat-container" class="chat-container">
             <div class="chat-header">
-                <h2>Приватный чат</h2>
-                <div class="online-status">
-                    <div id="status-dot" class="status-dot"></div>
-                    <span id="current-user"></span>
-                    <button id="logout-btn" style="margin-left: 15px; padding: 5px 10px; background: transparent; border: 1px solid white; color: white; border-radius: 5px; cursor: pointer;">Выйти</button>
+                <h2>💬 Приватный чат</h2>
+                <div class="user-info">
+                    <span class="online-dot"></span>
+                    <span id="current-user">Пользователь</span>
+                    <button id="logout-btn" style="
+                        background: transparent; 
+                        border: 1px solid white; 
+                        padding: 5px 10px; 
+                        border-radius: 5px; 
+                        cursor: pointer;
+                        width: auto;
+                        font-size: 14px;
+                    ">Выйти</button>
                 </div>
             </div>
             
             <div id="chat-messages" class="chat-messages">
-                <!-- Сообщения появятся здесь -->
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    Чат пуст. Начните общение!
+                </div>
             </div>
             
             <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Введите сообщение...">
+                <input type="text" id="message-input" placeholder="Введите сообщение..." autocomplete="off">
                 <button id="send-btn">Отправить</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Конфигурация
-        const SCRIPT_URL = 'https://docs.google.com/spreadsheets/d/1oesJsry2UzyKPW9y1ma2QSSkKwqhYZ2hbB5JthAI5rg/edit?gid=0#gid=0'; // Замените на ваш URL скрипта
-        
-        // Элементы страницы
-        const loginForm = document.getElementById('login-form');
-        const chatContainer = document.getElementById('chat-container');
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const sendBtn = document.getElementById('send-btn');
-        const messageInput = document.getElementById('message-input');
-        const chatMessages = document.getElementById('chat-messages');
-        const loginMessage = document.getElementById('login-message');
-        const currentUserSpan = document.getElementById('current-user');
-        const statusDot = document.getElementById('status-dot');
-        const sheetIdInput = document.getElementById('sheet-id');
+        // Простой мессенджер - вся логика здесь
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем все элементы
+            const loginForm = document.getElementById('login-form');
+            const chatContainer = document.getElementById('chat-container');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const sendBtn = document.getElementById('send-btn');
+            const messageInput = document.getElementById('message-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const currentUserSpan = document.getElementById('current-user');
+            
+            let currentUser = null;
+            let messageCheckInterval = null;
 
-        let currentUser = null;
-        let sheetId = '';
-        let refreshInterval = null;
-
-        // Вход в чат
-        loginBtn.addEventListener('click', () => {
-            const username = document.getElementById('username').value.trim();
-            const userRole = document.getElementById('user-role').value;
-            sheetId = sheetIdInput.value.trim();
-            
-            if (!username || !sheetId) {
-                showMessage('Заполните все поля', 'error');
-                return;
-            }
-            
-            currentUser = {
-                name: username,
-                role: userRole
-            };
-            
-            // Сохраняем настройки
-            localStorage.setItem('messengerSettings', JSON.stringify({
-                username,
-                userRole,
-                sheetId
-            }));
-            
-            // Показываем чат
-            loginForm.style.display = 'none';
-            chatContainer.style.display = 'flex';
-            currentUserSpan.textContent = username;
-            
-            // Загружаем сообщения
-            loadMessages();
-            
-            // Запускаем автообновление
-            startAutoRefresh();
-        });
-
-        // Выход из чата
-        logoutBtn.addEventListener('click', () => {
-            chatContainer.style.display = 'none';
-            loginForm.style.display = 'block';
-            currentUser = null;
-            
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-        });
-
-        // Отправка сообщения
-        sendBtn.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        async function sendMessage() {
-            const messageText = messageInput.value.trim();
-            if (!messageText || !currentUser) return;
-            
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'addMessage',
-                        sheetId: sheetId,
-                        message: {
-                            text: messageText,
-                            sender: currentUser.name,
-                            senderRole: currentUser.role,
-                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                            timestamp: Date.now()
-                        }
-                    })
-                });
+            // Вход в чат
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('username').value.trim();
+                const userRole = document.getElementById('user-role').value;
                 
-                const result = await response.json();
-                
-                if (result.success) {
-                    messageInput.value = '';
-                    await loadMessages();
-                } else {
-                    showMessage('Ошибка отправки: ' + result.error, 'error');
+                if (!username) {
+                    alert('Пожалуйста, введите ваше имя');
+                    return;
                 }
-            } catch (error) {
-                showMessage('Ошибка сети', 'error');
-                console.error('Ошибка отправки:', error);
-            }
-        }
-
-        // Загрузка сообщений
-        async function loadMessages() {
-            if (!sheetId) return;
-            
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=getMessages&sheetId=${encodeURIComponent(sheetId)}`);
-                const result = await response.json();
                 
-                if (result.success) {
-                    displayMessages(result.messages);
-                    statusDot.classList.add('online');
-                } else {
-                    statusDot.classList.remove('online');
-                    console.error('Ошибка загрузки:', result.error);
-                }
-            } catch (error) {
-                statusDot.classList.remove('online');
-                console.error('Ошибка сети:', error);
-            }
-        }
+                currentUser = {
+                    name: username,
+                    role: userRole,
+                    lastSeen: Date.now()
+                };
+                
+                // Сохраняем данные пользователя
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Переходим в чат
+                loginForm.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                currentUserSpan.textContent = username;
+                
+                // Загружаем сообщения
+                loadMessages();
+                
+                // Запускаем проверку новых сообщений
+                startMessageChecking();
+                
+                // Фокус на поле ввода
+                messageInput.focus();
+            });
 
-        function displayMessages(messages) {
-            chatMessages.innerHTML = '';
-            
-            // Сортируем по времени
-            messages.sort((a, b) => a.timestamp - b.timestamp);
-            
-            // Показываем все сообщения
-            messages.forEach(msg => {
-                const isMyMessage = currentUser && msg.senderRole === currentUser.role;
+            // Выход из чата
+            logoutBtn.addEventListener('click', function() {
+                chatContainer.style.display = 'none';
+                loginForm.style.display = 'block';
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                
+                if (messageCheckInterval) {
+                    clearInterval(messageCheckInterval);
+                }
+            });
+
+            // Отправка сообщения
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                if (!currentUser) return;
+                
+                const messageText = messageInput.value.trim();
+                if (!messageText) return;
+                
+                // Получаем текущие сообщения
+                let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+                
+                // Создаем новое сообщение
+                const newMessage = {
+                    id: Date.now(),
+                    text: messageText,
+                    sender: currentUser.name,
+                    senderRole: currentUser.role,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    timestamp: Date.now()
+                };
+                
+                // Добавляем сообщение
+                messages.push(newMessage);
+                
+                // Сохраняем обратно
+                localStorage.setItem('chatMessages', JSON.stringify(messages));
+                
+                // Очищаем поле ввода
+                messageInput.value = '';
+                
+                // Показываем сообщение
+                displayMessage(newMessage);
+                
+                // Прокручиваем вниз
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function loadMessages() {
+                const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+                
+                // Очищаем чат
+                chatMessages.innerHTML = '';
+                
+                if (messages.length === 0) {
+                    chatMessages.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Чат пуст. Начните общение!</div>';
+                    return;
+                }
+                
+                // Сортируем по времени
+                messages.sort((a, b) => a.timestamp - b.timestamp);
+                
+                // Показываем все сообщения
+                messages.forEach(msg => displayMessage(msg));
+                
+                // Прокручиваем вниз
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function displayMessage(message) {
+                if (!currentUser) return;
+                
+                const isMyMessage = message.senderRole === currentUser.role;
                 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${isMyMessage ? 'my-message' : 'friend-message'}`;
                 
                 messageDiv.innerHTML = `
-                    <div class="message-sender">${msg.sender}</div>
-                    <div class="message-text">${msg.text}</div>
-                    <div class="message-time">${msg.time}</div>
+                    <div class="message-sender">${message.sender}</div>
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-time">${message.time}</div>
                 `;
                 
                 chatMessages.appendChild(messageDiv);
-            });
-            
-            // Прокручиваем вниз
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Автообновление
-        function startAutoRefresh() {
-            refreshInterval = setInterval(loadMessages, 2000);
-        }
-
-        function showMessage(text, type) {
-            loginMessage.textContent = text;
-            loginMessage.style.color = type === 'error' ? '#e74c3c' : '#2ecc71';
-        }
-
-        // Загрузка сохраненных настроек
-        window.addEventListener('load', () => {
-            const saved = localStorage.getItem('messengerSettings');
-            if (saved) {
-                const settings = JSON.parse(saved);
-                document.getElementById('username').value = settings.username;
-                document.getElementById('user-role').value = settings.userRole;
-                sheetIdInput.value = settings.sheetId;
             }
+
+            function startMessageChecking() {
+                // Проверяем новые сообщения каждую секунду
+                messageCheckInterval = setInterval(function() {
+                    loadMessages();
+                }, 1000);
+            }
+
+            // Автовход если уже заходили
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    document.getElementById('username').value = userData.name;
+                    document.getElementById('user-role').value = userData.role;
+                    setTimeout(() => loginBtn.click(), 100);
+                } catch (e) {
+                    console.log('Не удалось восстановить сессию');
+                }
+            }
+
+            // Предзаполняем имя в зависимости от выбора роли
+            document.getElementById('user-role').addEventListener('change', function() {
+                const defaultNames = {
+                    'user1': 'Я',
+                    'user2': 'Друг'
+                };
+                document.getElementById('username').value = defaultNames[this.value];
+            });
         });
     </script>
 </body>
