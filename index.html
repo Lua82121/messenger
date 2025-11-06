@@ -9,11 +9,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -25,67 +25,54 @@
             width: 100%;
             max-width: 500px;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         .header {
-            background: linear-gradient(to right, #667eea, #764ba2);
+            background: #4a5568;
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
         
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
         .form-container {
-            padding: 30px;
+            padding: 20px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         
         input, select {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 16px;
-        }
-        
-        input:focus, select:focus {
-            border-color: #667eea;
-            outline: none;
         }
         
         button {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(to right, #667eea, #764ba2);
+            padding: 12px;
+            background: #4a5568;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            margin-top: 10px;
         }
         
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #2d3748;
         }
         
         .chat-container {
@@ -95,9 +82,9 @@
         }
         
         .chat-header {
-            background: linear-gradient(to right, #667eea, #764ba2);
+            background: #4a5568;
             color: white;
-            padding: 15px 20px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -105,96 +92,70 @@
         
         .chat-messages {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
-            background: #f8f9fa;
+            background: #f7fafc;
         }
         
         .message {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             max-width: 80%;
-            padding: 12px 15px;
-            border-radius: 15px;
+            padding: 10px;
+            border-radius: 10px;
             word-wrap: break-word;
         }
         
         .my-message {
-            background: linear-gradient(to right, #667eea, #764ba2);
+            background: #4299e1;
             color: white;
             margin-left: auto;
-            border-bottom-right-radius: 5px;
+            text-align: right;
         }
         
         .friend-message {
-            background: #e9ecef;
-            color: #333;
-            border-bottom-left-radius: 5px;
+            background: #e2e8f0;
+            color: #2d3748;
         }
         
         .message-sender {
             font-size: 12px;
-            font-weight: 600;
+            font-weight: bold;
             margin-bottom: 5px;
-            opacity: 0.9;
         }
         
         .message-time {
-            font-size: 11px;
-            text-align: right;
+            font-size: 10px;
             margin-top: 5px;
             opacity: 0.7;
         }
         
         .chat-input {
             display: flex;
-            padding: 15px;
+            padding: 10px;
             background: white;
-            border-top: 1px solid #eee;
-            gap: 10px;
+            border-top: 1px solid #e2e8f0;
         }
         
         .chat-input input {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
         }
         
         .chat-input button {
             width: auto;
-            padding: 12px 20px;
-            white-space: nowrap;
+            padding: 10px 15px;
+            margin: 0;
         }
         
         .instructions {
-            background: #e3f2fd;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            background: #ebf8ff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
             font-size: 14px;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .online-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4caf50;
-            display: inline-block;
-        }
-        
-        .typing-indicator {
-            color: #666;
-            font-style: italic;
-            font-size: 14px;
-            padding: 5px 15px;
         }
     </style>
 </head>
@@ -203,7 +164,7 @@
         <!-- Форма входа -->
         <div id="login-form" class="form-container">
             <div class="header">
-                <h1>💬 Простой мессенджер</h1>
+                <h1>Простой мессенджер</h1>
                 <p>Только для вас и вашего друга</p>
             </div>
             
@@ -213,14 +174,14 @@
                 2. Введите ваше имя<br>
                 3. Начните общаться!<br>
                 <br>
-                <em>Сообщения сохраняются в вашем браузере</em>
+                <em>Сообщения сохраняются в браузере</em>
             </div>
             
             <div class="form-group">
                 <label for="user-role">Вы кто?</label>
                 <select id="user-role">
-                    <option value="user1">👤 Я (Пользователь 1)</option>
-                    <option value="user2">👥 Мой друг (Пользователь 2)</option>
+                    <option value="user1">Я (Пользователь 1)</option>
+                    <option value="user2">Мой друг (Пользователь 2)</option>
                 </select>
             </div>
             
@@ -235,9 +196,8 @@
         <!-- Чат -->
         <div id="chat-container" class="chat-container">
             <div class="chat-header">
-                <h2>💬 Приватный чат</h2>
-                <div class="user-info">
-                    <span class="online-dot"></span>
+                <h2>Приватный чат</h2>
+                <div>
                     <span id="current-user">Пользователь</span>
                     <button id="logout-btn" style="
                         background: transparent; 
@@ -247,6 +207,7 @@
                         cursor: pointer;
                         width: auto;
                         font-size: 14px;
+                        margin-left: 10px;
                     ">Выйти</button>
                 </div>
             </div>
@@ -265,177 +226,170 @@
     </div>
 
     <script>
-        // Простой мессенджер - вся логика здесь
-        document.addEventListener('DOMContentLoaded', function() {
-            // Получаем все элементы
-            const loginForm = document.getElementById('login-form');
-            const chatContainer = document.getElementById('chat-container');
-            const loginBtn = document.getElementById('login-btn');
-            const logoutBtn = document.getElementById('logout-btn');
-            const sendBtn = document.getElementById('send-btn');
-            const messageInput = document.getElementById('message-input');
-            const chatMessages = document.getElementById('chat-messages');
-            const currentUserSpan = document.getElementById('current-user');
+        // Получаем все элементы
+        const loginForm = document.getElementById('login-form');
+        const chatContainer = document.getElementById('chat-container');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const sendBtn = document.getElementById('send-btn');
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const currentUserSpan = document.getElementById('current-user');
+        
+        let currentUser = null;
+        let messageCheckInterval = null;
+
+        // Вход в чат
+        loginBtn.addEventListener('click', function() {
+            const username = document.getElementById('username').value.trim();
+            const userRole = document.getElementById('user-role').value;
             
-            let currentUser = null;
-            let messageCheckInterval = null;
+            if (!username) {
+                alert('Пожалуйста, введите ваше имя');
+                return;
+            }
+            
+            currentUser = {
+                name: username,
+                role: userRole
+            };
+            
+            // Сохраняем данные пользователя
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Переходим в чат
+            loginForm.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            currentUserSpan.textContent = username;
+            
+            // Загружаем сообщения
+            loadMessages();
+            
+            // Запускаем проверку новых сообщений
+            startMessageChecking();
+            
+            // Фокус на поле ввода
+            messageInput.focus();
+        });
 
-            // Вход в чат
-            loginBtn.addEventListener('click', function() {
-                const username = document.getElementById('username').value.trim();
-                const userRole = document.getElementById('user-role').value;
-                
-                if (!username) {
-                    alert('Пожалуйста, введите ваше имя');
-                    return;
-                }
-                
-                currentUser = {
-                    name: username,
-                    role: userRole,
-                    lastSeen: Date.now()
-                };
-                
-                // Сохраняем данные пользователя
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                
-                // Переходим в чат
-                loginForm.style.display = 'none';
-                chatContainer.style.display = 'flex';
-                currentUserSpan.textContent = username;
-                
-                // Загружаем сообщения
+        // Выход из чата
+        logoutBtn.addEventListener('click', function() {
+            chatContainer.style.display = 'none';
+            loginForm.style.display = 'block';
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            
+            if (messageCheckInterval) {
+                clearInterval(messageCheckInterval);
+            }
+        });
+
+        // Отправка сообщения
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            if (!currentUser) return;
+            
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+            
+            // Получаем текущие сообщения
+            let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            
+            // Создаем новое сообщение
+            const newMessage = {
+                id: Date.now(),
+                text: messageText,
+                sender: currentUser.name,
+                senderRole: currentUser.role,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            // Добавляем сообщение
+            messages.push(newMessage);
+            
+            // Сохраняем обратно
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            
+            // Очищаем поле ввода
+            messageInput.value = '';
+            
+            // Показываем сообщение
+            displayMessage(newMessage);
+            
+            // Прокручиваем вниз
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            
+            // Очищаем чат
+            chatMessages.innerHTML = '';
+            
+            if (messages.length === 0) {
+                chatMessages.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Чат пуст. Начните общение!</div>';
+                return;
+            }
+            
+            // Показываем все сообщения
+            messages.forEach(msg => displayMessage(msg));
+            
+            // Прокручиваем вниз
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function displayMessage(message) {
+            if (!currentUser) return;
+            
+            const isMyMessage = message.senderRole === currentUser.role;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isMyMessage ? 'my-message' : 'friend-message'}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-sender">${message.sender}</div>
+                <div class="message-text">${message.text}</div>
+                <div class="message-time">${message.time}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+        }
+
+        function startMessageChecking() {
+            // Проверяем новые сообщения каждую секунду
+            messageCheckInterval = setInterval(function() {
                 loadMessages();
-                
-                // Запускаем проверку новых сообщений
-                startMessageChecking();
-                
-                // Фокус на поле ввода
-                messageInput.focus();
-            });
+            }, 1000);
+        }
 
-            // Выход из чата
-            logoutBtn.addEventListener('click', function() {
-                chatContainer.style.display = 'none';
-                loginForm.style.display = 'block';
-                currentUser = null;
-                localStorage.removeItem('currentUser');
-                
-                if (messageCheckInterval) {
-                    clearInterval(messageCheckInterval);
-                }
-            });
-
-            // Отправка сообщения
-            sendBtn.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-
-            function sendMessage() {
-                if (!currentUser) return;
-                
-                const messageText = messageInput.value.trim();
-                if (!messageText) return;
-                
-                // Получаем текущие сообщения
-                let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
-                
-                // Создаем новое сообщение
-                const newMessage = {
-                    id: Date.now(),
-                    text: messageText,
-                    sender: currentUser.name,
-                    senderRole: currentUser.role,
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    timestamp: Date.now()
-                };
-                
-                // Добавляем сообщение
-                messages.push(newMessage);
-                
-                // Сохраняем обратно
-                localStorage.setItem('chatMessages', JSON.stringify(messages));
-                
-                // Очищаем поле ввода
-                messageInput.value = '';
-                
-                // Показываем сообщение
-                displayMessage(newMessage);
-                
-                // Прокручиваем вниз
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Автовход если уже заходили
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+            try {
+                const userData = JSON.parse(savedUser);
+                document.getElementById('username').value = userData.name;
+                document.getElementById('user-role').value = userData.role;
+                setTimeout(() => loginBtn.click(), 100);
+            } catch (e) {
+                console.log('Не удалось восстановить сессию');
             }
+        }
 
-            function loadMessages() {
-                const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
-                
-                // Очищаем чат
-                chatMessages.innerHTML = '';
-                
-                if (messages.length === 0) {
-                    chatMessages.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Чат пуст. Начните общение!</div>';
-                    return;
-                }
-                
-                // Сортируем по времени
-                messages.sort((a, b) => a.timestamp - b.timestamp);
-                
-                // Показываем все сообщения
-                messages.forEach(msg => displayMessage(msg));
-                
-                // Прокручиваем вниз
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            function displayMessage(message) {
-                if (!currentUser) return;
-                
-                const isMyMessage = message.senderRole === currentUser.role;
-                
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${isMyMessage ? 'my-message' : 'friend-message'}`;
-                
-                messageDiv.innerHTML = `
-                    <div class="message-sender">${message.sender}</div>
-                    <div class="message-text">${message.text}</div>
-                    <div class="message-time">${message.time}</div>
-                `;
-                
-                chatMessages.appendChild(messageDiv);
-            }
-
-            function startMessageChecking() {
-                // Проверяем новые сообщения каждую секунду
-                messageCheckInterval = setInterval(function() {
-                    loadMessages();
-                }, 1000);
-            }
-
-            // Автовход если уже заходили
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                try {
-                    const userData = JSON.parse(savedUser);
-                    document.getElementById('username').value = userData.name;
-                    document.getElementById('user-role').value = userData.role;
-                    setTimeout(() => loginBtn.click(), 100);
-                } catch (e) {
-                    console.log('Не удалось восстановить сессию');
-                }
-            }
-
-            // Предзаполняем имя в зависимости от выбора роли
-            document.getElementById('user-role').addEventListener('change', function() {
-                const defaultNames = {
-                    'user1': 'Я',
-                    'user2': 'Друг'
-                };
-                document.getElementById('username').value = defaultNames[this.value];
-            });
+        // Предзаполняем имя в зависимости от выбора роли
+        document.getElementById('user-role').addEventListener('change', function() {
+            const defaultNames = {
+                'user1': 'Я',
+                'user2': 'Друг'
+            };
+            document.getElementById('username').value = defaultNames[this.value];
         });
     </script>
 </body>
 </html>
+
