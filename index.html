@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Приватный мессенджер для двоих</title>
+    <title>Приватный мессенджер</title>
     <style>
         * {
             margin: 0;
@@ -57,7 +57,7 @@
             color: #333;
         }
         
-        input {
+        input, select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e1e1e1;
@@ -66,7 +66,7 @@
             transition: border-color 0.3s;
         }
         
-        input:focus {
+        input:focus, select:focus {
             border-color: #4a00e0;
             outline: none;
         }
@@ -166,6 +166,24 @@
             margin: 15px 0;
             border-radius: 8px;
             border-left: 4px solid #4a00e0;
+            font-size: 14px;
+        }
+        
+        .online-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+        }
+        
+        .status-dot.online {
+            background-color: #2ecc71;
         }
     </style>
 </head>
@@ -178,15 +196,20 @@
             </div>
             
             <div class="instructions">
-                <strong>Как использовать:</strong><br>
-                1. Вы и ваш друг заходите на этот сайт<br>
-                2. Один выбирает "Я", второй - "Мой друг"<br>
-                3. Общайтесь!
+                <strong>ВНИМАНИЕ: Для работы чата нужно настроить Google Таблицу</strong><br><br>
+                1. Создайте Google Таблицу по <a href="https://docs.google.com/spreadsheets" target="_blank">ссылке</a><br>
+                2. Скопируйте её ID из URL (между /d/ и /edit)<br>
+                3. Вставьте ID ниже
+            </div>
+            
+            <div class="form-group">
+                <label for="sheet-id">ID Google Таблицы:</label>
+                <input type="text" id="sheet-id" placeholder="Введите ID вашей Google Таблицы">
             </div>
             
             <div class="form-group">
                 <label for="user-role">Вы кто?</label>
-                <select id="user-role" class="form-control">
+                <select id="user-role">
                     <option value="user1">Я (Пользователь 1)</option>
                     <option value="user2">Мой друг (Пользователь 2)</option>
                 </select>
@@ -204,8 +227,8 @@
         <div id="chat-container" class="chat-container">
             <div class="chat-header">
                 <h2>Приватный чат</h2>
-                <div>
-                    <span id="online-status">●</span>
+                <div class="online-status">
+                    <div id="status-dot" class="status-dot"></div>
                     <span id="current-user"></span>
                     <button id="logout-btn" style="margin-left: 15px; padding: 5px 10px; background: transparent; border: 1px solid white; color: white; border-radius: 5px; cursor: pointer;">Выйти</button>
                 </div>
@@ -223,6 +246,9 @@
     </div>
 
     <script>
+        // Конфигурация
+        const SCRIPT_URL = 'https://docs.google.com/spreadsheets/d/1oesJsry2UzyKPW9y1ma2QSSkKwqhYZ2hbB5JthAI5rg/edit?gid=0#gid=0'; // Замените на ваш URL скрипта
+        
         // Элементы страницы
         const loginForm = document.getElementById('login-form');
         const chatContainer = document.getElementById('chat-container');
@@ -233,26 +259,34 @@
         const chatMessages = document.getElementById('chat-messages');
         const loginMessage = document.getElementById('login-message');
         const currentUserSpan = document.getElementById('current-user');
-        const onlineStatus = document.getElementById('online-status');
+        const statusDot = document.getElementById('status-dot');
+        const sheetIdInput = document.getElementById('sheet-id');
 
-        // Ключ для хранения сообщений в localStorage
-        const STORAGE_KEY = 'private_messenger_messages';
+        let currentUser = null;
+        let sheetId = '';
+        let refreshInterval = null;
 
         // Вход в чат
         loginBtn.addEventListener('click', () => {
             const username = document.getElementById('username').value.trim();
             const userRole = document.getElementById('user-role').value;
+            sheetId = sheetIdInput.value.trim();
             
-            if (!username) {
-                showMessage('Пожалуйста, введите ваше имя', 'error');
+            if (!username || !sheetId) {
+                showMessage('Заполните все поля', 'error');
                 return;
             }
             
-            // Сохраняем информацию о пользователе
-            localStorage.setItem('currentUser', JSON.stringify({
+            currentUser = {
                 name: username,
-                role: userRole,
-                lastActive: Date.now()
+                role: userRole
+            };
+            
+            // Сохраняем настройки
+            localStorage.setItem('messengerSettings', JSON.stringify({
+                username,
+                userRole,
+                sheetId
             }));
             
             // Показываем чат
@@ -263,9 +297,6 @@
             // Загружаем сообщения
             loadMessages();
             
-            // Обновляем онлайн статус
-            updateOnlineStatus(userRole, username);
-            
             // Запускаем автообновление
             startAutoRefresh();
         });
@@ -274,7 +305,11 @@
         logoutBtn.addEventListener('click', () => {
             chatContainer.style.display = 'none';
             loginForm.style.display = 'block';
-            localStorage.removeItem('currentUser');
+            currentUser = null;
+            
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
         });
 
         // Отправка сообщения
@@ -283,106 +318,93 @@
             if (e.key === 'Enter') sendMessage();
         });
 
-        function sendMessage() {
+        async function sendMessage() {
             const messageText = messageInput.value.trim();
-            if (!messageText) return;
+            if (!messageText || !currentUser) return;
             
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const messages = getMessages();
-            
-            const newMessage = {
-                id: Date.now(),
-                text: messageText,
-                sender: currentUser.name,
-                senderRole: currentUser.role,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                timestamp: Date.now()
-            };
-            
-            messages.push(newMessage);
-            saveMessages(messages);
-            
-            // Обновляем онлайн статус
-            updateOnlineStatus(currentUser.role, currentUser.name);
-            
-            // Очищаем поле ввода и показываем сообщение
-            messageInput.value = '';
-            displayMessage(newMessage);
-            
-            // Прокручиваем вниз
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'addMessage',
+                        sheetId: sheetId,
+                        message: {
+                            text: messageText,
+                            sender: currentUser.name,
+                            senderRole: currentUser.role,
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            timestamp: Date.now()
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    messageInput.value = '';
+                    await loadMessages();
+                } else {
+                    showMessage('Ошибка отправки: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка сети', 'error');
+                console.error('Ошибка отправки:', error);
+            }
         }
 
-        // Работа с сообщениями
-        function getMessages() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        // Загрузка сообщений
+        async function loadMessages() {
+            if (!sheetId) return;
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getMessages&sheetId=${encodeURIComponent(sheetId)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayMessages(result.messages);
+                    statusDot.classList.add('online');
+                } else {
+                    statusDot.classList.remove('online');
+                    console.error('Ошибка загрузки:', result.error);
+                }
+            } catch (error) {
+                statusDot.classList.remove('online');
+                console.error('Ошибка сети:', error);
+            }
         }
 
-        function saveMessages(messages) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-        }
-
-        function loadMessages() {
-            const messages = getMessages();
+        function displayMessages(messages) {
             chatMessages.innerHTML = '';
             
             // Сортируем по времени
             messages.sort((a, b) => a.timestamp - b.timestamp);
             
             // Показываем все сообщения
-            messages.forEach(msg => displayMessage(msg));
+            messages.forEach(msg => {
+                const isMyMessage = currentUser && msg.senderRole === currentUser.role;
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isMyMessage ? 'my-message' : 'friend-message'}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-sender">${msg.sender}</div>
+                    <div class="message-text">${msg.text}</div>
+                    <div class="message-time">${msg.time}</div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+            });
             
             // Прокручиваем вниз
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // Проверяем онлайн статус друга
-            checkFriendOnlineStatus();
-        }
-
-        function displayMessage(message) {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const isMyMessage = message.senderRole === currentUser.role;
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isMyMessage ? 'my-message' : 'friend-message'}`;
-            
-            messageDiv.innerHTML = `
-                <div class="message-sender">${message.sender}</div>
-                <div class="message-text">${message.text}</div>
-                <div class="message-time">${message.time}</div>
-            `;
-            
-            chatMessages.appendChild(messageDiv);
-        }
-
-        // Онлайн статус
-        function updateOnlineStatus(role, username) {
-            const statusKey = role === 'user1' ? 'user1Status' : 'user2Status';
-            localStorage.setItem(statusKey, JSON.stringify({
-                name: username,
-                lastActive: Date.now()
-            }));
-        }
-
-        function checkFriendOnlineStatus() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const friendRole = currentUser.role === 'user1' ? 'user2Status' : 'user1Status';
-            const friendStatus = JSON.parse(localStorage.getItem(friendRole));
-            
-            if (friendStatus && (Date.now() - friendStatus.lastActive) < 30000) {
-                onlineStatus.style.color = '#2ecc71';
-                onlineStatus.title = 'Друг онлайн';
-            } else {
-                onlineStatus.style.color = '#e74c3c';
-                onlineStatus.title = 'Друг оффлайн';
-            }
         }
 
         // Автообновление
         function startAutoRefresh() {
-            setInterval(() => {
-                loadMessages();
-            }, 2000);
+            refreshInterval = setInterval(loadMessages, 2000);
         }
 
         function showMessage(text, type) {
@@ -390,14 +412,14 @@
             loginMessage.style.color = type === 'error' ? '#e74c3c' : '#2ecc71';
         }
 
-        // Автовход при загрузке страницы
+        // Загрузка сохраненных настроек
         window.addEventListener('load', () => {
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                const userInfo = JSON.parse(savedUser);
-                document.getElementById('username').value = userInfo.name;
-                document.getElementById('user-role').value = userInfo.role;
-                loginBtn.click();
+            const saved = localStorage.getItem('messengerSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.getElementById('username').value = settings.username;
+                document.getElementById('user-role').value = settings.userRole;
+                sheetIdInput.value = settings.sheetId;
             }
         });
     </script>
